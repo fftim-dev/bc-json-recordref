@@ -219,16 +219,6 @@ codeunit 70771 "Json Toolkit Impl." implements "Json Toolkit"
         exit(false);
     end;
 
-    procedure VariantToJsonToken(JsonVariant: Variant; var Token: JsonToken): Boolean
-    begin
-        if JsonVariant.IsJsonToken() then
-            Token := JsonVariant
-        else
-            Token := JsonVariant;
-
-        exit(true);
-    end;
-
     local procedure BuildArray(RecRef: RecordRef; UseSchema: Boolean) ResultArray: JsonArray
     begin
         if RecRef.FindSet() then
@@ -379,6 +369,7 @@ codeunit 70771 "Json Toolkit Impl." implements "Json Toolkit"
         DateTimeValue: DateTime;
         DateValue: Date;
         DecimalValue: Decimal;
+        GuidValue: Guid;
         IntegerValue: Integer;
         TextValue: Text;
         TimeValue: Time;
@@ -436,6 +427,18 @@ codeunit 70771 "Json Toolkit Impl." implements "Json Toolkit"
                         exit(false);
                     AssignFieldValue(FieldRef, DateTimeValue, UpdateMode);
                 end;
+            FieldType::Option:
+                begin
+                    if not EvaluateOption(FieldRef, TextValue, IntegerValue) then
+                        exit(false);
+                    AssignFieldValue(FieldRef, IntegerValue, UpdateMode);
+                end;
+            FieldType::Guid:
+                begin
+                    if not Evaluate(GuidValue, TextValue) then
+                        exit(false);
+                    AssignFieldValue(FieldRef, GuidValue, UpdateMode);
+                end;
             else
                 AssignFieldValue(FieldRef, TextValue, UpdateMode);
         end;
@@ -488,10 +491,8 @@ codeunit 70771 "Json Toolkit Impl." implements "Json Toolkit"
             exit(false);
 
         RecRef.SetRecFilter();
-        if RecRef.FindFirst() then begin
-            RecRef.Reset();
+        if RecRef.FindFirst() then
             exit(true);
-        end;
 
         RecRef.Reset();
         exit(false);
@@ -515,10 +516,8 @@ codeunit 70771 "Json Toolkit Impl." implements "Json Toolkit"
         end;
 
         TargetRecRef.SetRecFilter();
-        if TargetRecRef.FindFirst() then begin
-            TargetRecRef.Reset();
+        if TargetRecRef.FindFirst() then
             exit(true);
-        end;
 
         TargetRecRef.Reset();
         exit(false);
@@ -726,5 +725,54 @@ codeunit 70771 "Json Toolkit Impl." implements "Json Toolkit"
         if Evaluate(DateTimeValue, ValueText, 9) then
             exit(true);
         exit(Evaluate(DateTimeValue, ValueText));
+    end;
+
+    local procedure EvaluateOption(FieldRef: FieldRef; ValueText: Text; var OptionValue: Integer): Boolean
+    begin
+        if Evaluate(OptionValue, ValueText, 9) then
+            exit(OptionValue >= 0);
+
+        if EvaluateOptionText(FieldRef.OptionMembers, ValueText, OptionValue) then
+            exit(true);
+
+        exit(EvaluateOptionText(FieldRef.OptionCaption, ValueText, OptionValue));
+    end;
+
+    local procedure EvaluateOptionText(OptionValues: Text; ValueText: Text; var OptionValue: Integer): Boolean
+    var
+        OptionText: Text;
+        OptionIndex: Integer;
+    begin
+        while OptionValues <> '' do begin
+            OptionText := PopCommaSeparatedValue(OptionValues);
+            if IsSameOptionText(OptionText, ValueText) then begin
+                OptionValue := OptionIndex;
+                exit(true);
+            end;
+
+            OptionIndex += 1;
+        end;
+
+        exit(false);
+    end;
+
+    local procedure PopCommaSeparatedValue(var Values: Text) Value: Text
+    var
+        CommaPos: Integer;
+    begin
+        CommaPos := StrPos(Values, ',');
+        if CommaPos = 0 then begin
+            Value := Values;
+            Values := '';
+            exit(Value);
+        end;
+
+        Value := CopyStr(Values, 1, CommaPos - 1);
+        Values := CopyStr(Values, CommaPos + 1);
+    end;
+
+    local procedure IsSameOptionText(OptionText: Text; ValueText: Text): Boolean
+    begin
+        exit(LowerCase(DelChr(OptionText, '<>', ' ')) = LowerCase(DelChr(ValueText, '<>', ' ')));
     end;
 }
