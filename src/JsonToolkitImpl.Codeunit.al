@@ -743,6 +743,7 @@ codeunit 70771 "Json Toolkit Impl." implements "Json Toolkit"
         OptionText: Text;
         OptionIndex: Integer;
     begin
+        OptionIndex := 0;
         while OptionValues <> '' do begin
             OptionText := PopCommaSeparatedValue(OptionValues);
             if IsSameOptionText(OptionText, ValueText) then begin

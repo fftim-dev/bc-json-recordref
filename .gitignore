@@ -1,0 +1,23 @@
+# Business Central AL build output
+.alpackages/
+*.app
+*.runtimepackage
+*.alc
+
+# Local Business Central development state
+.vscode/.alcache/
+.vscode/launch.json
+.vscode/rad.json
+.snapshots/
+*.snapshot
+
+# Local scratch exports
+test*.json
+*.local.json
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
