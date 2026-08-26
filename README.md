@@ -17,14 +17,36 @@ Business Central integrations, migrations, and internal tools often need to move
 - Apply partial updates; omitted fields stay unchanged and `null` clears supported values.
 - Assign values directly or run field validation with `FieldRef.Validate`.
 
-The public entry point is codeunit `70770 "Json Toolkit"`. The core source is in [`src`](src/).
+The public entry point is codeunit `70770 "Json Toolkit"`. The library source is in [`src/toolkit`](src/toolkit/), and its automated tests are in [`src/test`](src/test/).
 
 ## Requirements and installation
 
 - Business Central application `27.0.0.0` or later
 - AL runtime `16.0` or later
 
-Clone the repository, open it in Visual Studio Code with the AL Language extension, download symbols, then build and publish the app to a Business Central sandbox.
+Clone the repository and open [`src/bc-json-recordref.code-workspace`](src/bc-json-recordref.code-workspace) in Visual Studio Code with the AL Language extension. The workspace loads the toolkit and test projects together. Download symbols, then build and publish the toolkit app to a Business Central sandbox.
+
+## Project structure
+
+```text
+src/
+├── bc-json-recordref.code-workspace
+├── toolkit/
+│   ├── app.json
+│   ├── codeunit/
+│   ├── enum/
+│   └── interface/
+└── test/
+    ├── app.json
+    ├── codeunit/
+    └── table/
+```
+
+- `src/toolkit` contains the publishable library extension, organized by AL object type.
+- `src/test` contains the test extension, test codeunits, and the supporting test table. Its manifest declares a dependency on the toolkit app.
+- `src/bc-json-recordref.code-workspace` opens both AL projects in one VS Code workspace.
+
+To run the automated tests, build and publish `src/toolkit` first, then build and publish `src/test`. Run the `Json Toolkit General Tests` and `Json Toolkit Schema Tests` codeunits with your Business Central test runner.
 
 ## Usage
 
@@ -119,7 +141,7 @@ This is a developer library, not an end-user import wizard. External payloads ca
 
 Current limitations:
 
-- No automated AL test suite or detailed error diagnostics yet.
+- Error reporting is limited to Boolean success/failure results.
 - Fields are matched by name; unknown properties are ignored.
 - Nested objects and arrays cannot be imported as field values.
 - `Blob`, `Media`, `MediaSet`, and unsupported field classes are skipped.

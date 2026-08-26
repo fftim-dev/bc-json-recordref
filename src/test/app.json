@@ -1,0 +1,41 @@
+{
+  "id": "b53c8092-ad2f-4a3c-9f3b-496284d8c7bf",
+  "name": "JSON RecordRef Toolkit Tests",
+  "publisher": "fftim-dev",
+  "version": "1.0.0.0",
+  "brief": "Automated tests for the JSON RecordRef Toolkit.",
+  "description": "Test extension covering JSON export, import, patch, and table-copy operations provided by the JSON RecordRef Toolkit.",
+  "EULA": "https://github.com/fftim-dev/bc-json-recordref/LICENSE",
+  "help": "https://github.com/fftim-dev/bc-json-recordref/README.md",
+  "url": "https://github.com/fftim-dev/bc-json-recordref",
+  "logo": "",
+  "dependencies": [
+    {
+      "id": "7c2991f9-2fd2-41d8-b449-6f30edbdd161",
+      "publisher": "fftim-dev",
+      "name": "JSON Toolkit for Business Central",
+      "version": "1.0.0.0"
+    }
+  ],
+  "screenshots": [],
+  "platform": "27.0.0.0",
+  "application": "27.0.0.0",
+  "idRanges": [
+    {
+      "from": 70770,
+      "to": 70799
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "source": {
+    "repositoryUrl": "https://github.com/fftim-dev/bc-json-recordref"
+  },
+  "runtime": "16.0",
+  "features": [
+    "NoImplicitWith"
+  ]
+}
